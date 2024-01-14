@@ -20,7 +20,7 @@ txt_formats = ['txt','docx']
 user_file = 'C:\\Users\\Taha\\Desktop\\username.txt'
 pass_file = 'C:\\Users\\Taha\\Desktop\\passwords.txt'
 allowed_dir = "C:\\Users\\Taha\\Desktop\\client_dir"
-root = 'C:\\Users\\Taha\\Desktop'
+#root = 'C:\\Users\\Taha\\Desktop'
 report_file = 'C:\\Users\\Taha\\Desktop\\report_file.txt'
 #current_dir = allowed_dir
 # username=''
@@ -55,14 +55,14 @@ def absolute_path(thread,path):
 
     if '../' in path:
 
-        path = path.replace('../','')
+        path = path.replace('../','')  
         path2 = os.path.abspath(os.path.join(thread.current_dir, os.pardir))
-        path = os.path.join(path2,path)
+        path = os.path.join(path2,path)                                                                                    
         return path
 
     elif './' in path :
 
-        path = path.replace('./','')
+        path = path.replace('./','')    
         path = os.path.join(thread.current_dir,path)
         return path
      
@@ -265,8 +265,8 @@ def handle_retr(client,command,thread) :
 
             thread.current_dir = os.path.dirname(path)
 
-            thread.username =f'retr:USERNAME:{thread.username}'
-            send_msg(client,thread.username)
+            username =f'retr:USERNAME:{thread.username}'
+            send_msg(client,username)
             file = open(path,'br')
             file_name = os.path.basename(path)  #retrieve file name with format
             extension =file_name.split('.')
@@ -347,7 +347,7 @@ def handle_mkd (client,command,thread) :
     if path:    
         if isAllowed_Path(path,thread):
 
-            abs_path = os.path.abspath(path)
+            abs_path = os.path.abspath(path)      
             thread.current_dir = os.path.abspath(os.path.join(abs_path, os.pardir)) #retrive parent dir
 
             if not os.path.exists(abs_path):
@@ -463,7 +463,7 @@ def handle_pwd(client,thread):
 
 
 def handle_cwd(client , command,thread):
-    global root
+    
 
     path = command.replace('cwd ','')
     #path = os.path.abspath(path)
@@ -471,16 +471,14 @@ def handle_cwd(client , command,thread):
 
     if isAllowed_Path(path,thread) and path:
 
-        print(path)
-
         if os.path.isdir(path):
 
-            if path == root: #for admins...
+            # if path == root: #for admins...
 
-                send_msg(client,'list:400 You can`t quit root!')
-                report = f'{thread.username} cwd : {path}  status:"Can`t quit root."'
-                write_report(report)
-            else:
+            #     send_msg(client,'list:400 You can`t quit root!')
+            #     report = f'{thread.username} cwd : {path}  status:"Can`t quit root."'
+            #     write_report(report)
+            # else:
 
                 thread.current_dir = path
                 send_msg(client,f'list:200 current directory successfully changed!\ncurrent directory is :{thread.current_dir}')
@@ -500,15 +498,15 @@ def handle_cwd(client , command,thread):
 
 
 def handle_cdup(client,thread):
-    global root
+    #global root
     
     path = os.path.abspath(os.path.join(thread.current_dir, os.pardir))
 
     if  isAllowed_Path(path,thread) :
-        if thread.current_dir == root:
-            send_msg(client,'list:400 You can`t quit root!')
-            report = f'{thread.username} cdup : {path}  status:"Can`t quit root"'
-        else :
+        # if thread.current_dir == root:
+        #     send_msg(client,'list:400 You can`t quit root!')
+        #     report = f'{thread.username} cdup : {path}  status:"Can`t quit root"'
+        # else :
             thread.current_dir = path
             send_msg(client,f'list:200 directory successfully changed!\ncurrent directory is :{thread.current_dir}')
             report = f'{thread.username} cdup : {path}  status:"True"'
@@ -567,14 +565,14 @@ def handle_client(client,addr):
          handle_list(command,thread)
       elif  'retr' in command :
           handle_retr(client,command,thread) 
+      elif 'stor' in command :
+          handle_stor(client,command,thread)
       elif 'dele' in command :
-          handle_dele(client,command,thread)
+          handle_dele(client,command,thread)###
       elif 'mkd' in command :
           handle_mkd(client,command,thread)
       elif 'rmd' in command :
           handle_rmd(client,command,thread)
-      elif 'stor' in command :
-          handle_stor(client,command,thread)
       elif 'pwd' in command :
           handle_pwd(client,thread)
       elif 'cwd' in command :
